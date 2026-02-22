@@ -91,7 +91,6 @@ static BOOL shouldShowNotificationForBundle(NSString *bundleID);
 static void showNotificationInIsland(NSString *title, NSString *body, UIImage *icon, NSString *bundleID);
 static void hideNotificationFromIsland(void);
 static void createIslandNotificationView(void);
-static void updateIslandNotificationLayout(void);
 static void animateIslandToExpanded(void);
 static void animateIslandToCompact(void);
 static UIView *findIslandView(void);
