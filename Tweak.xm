@@ -169,27 +169,20 @@ static BOOL shouldShowNotificationForBundle(NSString *bundleID) {
 
 #pragma mark - 查找灵动岛视图
 static UIView *findIslandView(void) {
-    // 遍历所有窗口查找灵动岛
     for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
         if (![scene isKindOfClass:[UIWindowScene class]]) continue;
 
         UIWindowScene *windowScene = (UIWindowScene *)scene;
         for (UIWindow *window in windowScene.windows) {
-            // 递归查找 SAUIElementView
-            __block UIView *foundView = nil;
-            void (^__block recursiveBlock)(UIView *) = nil;
-            recursiveBlock = ^(UIView *view) {
+            NSMutableArray *stack = [NSMutableArray arrayWithObject:window];
+            while (stack.count > 0) {
+                UIView *view = [stack lastObject];
+                [stack removeLastObject];
                 if ([view isKindOfClass:%c(SAUIElementView)]) {
-                    foundView = view;
-                    return;
+                    return view;
                 }
-                for (UIView *subview in view.subviews) {
-                    if (foundView) return;
-                    recursiveBlock(subview);
-                }
-            };
-            recursiveBlock(window);
-            if (foundView) return foundView;
+                [stack addObjectsFromArray:view.subviews];
+            }
         }
     }
     return nil;
