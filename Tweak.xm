@@ -177,17 +177,18 @@ static UIView *findIslandView(void) {
         for (UIWindow *window in windowScene.windows) {
             // 递归查找 SAUIElementView
             __block UIView *foundView = nil;
-            void (^block)(UIView *) = ^(UIView *view) {
+            void (^__block recursiveBlock)(UIView *) = nil;
+            recursiveBlock = ^(UIView *view) {
                 if ([view isKindOfClass:%c(SAUIElementView)]) {
                     foundView = view;
                     return;
                 }
                 for (UIView *subview in view.subviews) {
                     if (foundView) return;
-                    block(subview);
+                    recursiveBlock(subview);
                 }
             };
-            block(window);
+            recursiveBlock(window);
             if (foundView) return foundView;
         }
     }
@@ -345,11 +346,11 @@ static void showNotificationInIsland(NSString *title, NSString *body, UIImage *i
         }
 
         if (gShowBody && body) {
-            // 截断过长的正文
+            NSString *displayBody = body;
             if (body.length > gMaxBodyLength) {
-                body = [[body substringToIndex:gMaxBodyLength] stringByAppendingString:@"..."];
+                displayBody = [[body substringToIndex:gMaxBodyLength] stringByAppendingString:@"..."];
             }
-            gBodyLabel.text = body;
+            gBodyLabel.text = displayBody;
             gBodyLabel.hidden = NO;
         } else {
             gBodyLabel.hidden = YES;
@@ -393,21 +394,22 @@ static UIImage *getAppIconForBundle(NSString *bundleID) {
     if (!bundleID) return nil;
 
     @try {
-        // 尝试从 SpringBoard 获取图标
         Class sbIconClass = objc_getClass("SBIcon");
         if (sbIconClass) {
             id sbIconModel = [%c(SBIconModel) sharedInstance];
             if (sbIconModel) {
                 SEL iconForDisplayIdentifierSel = @selector(iconForDisplayIdentifier:);
                 if ([sbIconModel respondsToSelector:iconForDisplayIdentifierSel]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
                     id icon = [sbIconModel performSelector:iconForDisplayIdentifierSel withObject:bundleID];
                     if (icon) {
-                        // 获取图标图像
                         SEL iconImageSel = @selector(iconImage);
                         if ([icon respondsToSelector:iconImageSel]) {
                             return [icon performSelector:iconImageSel];
                         }
                     }
+#pragma clang diagnostic pop
                 }
             }
         }
