@@ -1,0 +1,21 @@
+.DS_Store
+/.build
+/Packages
+/packages
+/*.xcodeproj
+xcuserdata/
+DerivedData/
+.swiftpm/config/registries.json
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.netrc
+
+# Theos 构建产物
+.theos/
+obj/
+*.deb
+*.dylib
+*.plist.bak
+
+# IDE
+.vscode/
+.idea/

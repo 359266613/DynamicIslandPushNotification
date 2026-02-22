@@ -1,0 +1,10 @@
+Package: com.axs.dynamicislandpushnotification
+Name: 灵动岛推送通知
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: 让任何 App 的推送通知都能在灵动岛上显示，支持 iOS 15-16.6.1 无根越狱
+Maintainer: Axs
+Author: Axs
+Section: 灵动岛
+Depends: mobilesubstrate (>= 0.9.5000), preferenceloader
+Icon: https://axs66.github.io/pro/icon/dynamicislandpush.png

@@ -1,0 +1,88 @@
+name: Build deb
+
+on:
+  push:
+    paths:
+      - 'control'
+      - 'Tweak.xm'
+      - 'settings/**'
+      - 'DIPNLog.h'
+      - 'DIPNPrefsKeys.h'
+      - 'Makefile'
+      - 'settings/Makefile'
+      - '.github/workflows/release.yml'
+    branches:
+      - 'main'
+      - 'master'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Bump package version
+        run: |
+          VERSION_PREFIX="1.0.0"
+          VERSION_BASE=1
+          VERSION="${VERSION_PREFIX}-$((VERSION_BASE + ${{ github.run_number }}))"
+
+          echo "Using version: $VERSION"
+          sed -i '' "s/^Version: .*/Version: ${VERSION}/" control
+          echo "PACKAGE_VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Prepare Theos
+        uses: axs66/theos-action@main
+
+      - name: Build package (rootless)
+        run: |
+          rm -f ${{ github.workspace }}/packages/*.deb
+          make clean
+          make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless DIPN_LOG_LEVEL=2
+
+      - name: Build package (roothide)
+        run: |
+          make clean
+          make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=roothide DIPN_LOG_LEVEL=2
+
+      - name: List generated Deb packages
+        run: ls -la ${{ github.workspace }}/packages
+
+      - name: 创建 Release
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v1
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        with:
+          token: ${{ secrets.PAT }}
+          tag_name: v${{ env.PACKAGE_VERSION }}
+          name: 灵动岛推送通知 v${{ env.PACKAGE_VERSION }}
+          files: ${{ github.workspace }}/packages/*.deb
+          body: |
+            ## 灵动岛推送通知 v${{ env.PACKAGE_VERSION }}
+
+            ### 功能特性
+            - 让任何 App 的推送通知都能在灵动岛上显示
+            - 支持 iOS 15-16.6.1 无根越狱 (Dopamine)
+            - 支持显示 App 图标、标题、内容
+            - 可自定义显示时长
+            - 支持黑名单/白名单过滤
+
+            ### 安装方法
+            1. 下载对应版本的 .deb 文件
+            2. 在越狱环境中使用包管理器安装
+            3. 注销 SpringBoard 生效
+
+            ### 兼容性
+            - rootless: Dopamine 等 iOS 15-16.6.1 无根越狱
+            - roothide: roothide 越狱环境
+
+      - name: Upload Deb packages
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: DIPN-v${{ env.PACKAGE_VERSION }}
+          path: ${{ github.workspace }}/packages/*.deb

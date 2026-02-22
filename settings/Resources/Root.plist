@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<!-- 主开关 -->
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>headerCellClass</key>
+			<string>HBPackageNameHeaderCell</string>
+			<key>packageIdentifier</key>
+			<string>com.axs.dynamicislandpushnotification</string>
+			<key>packageName</key>
+			<string>灵动岛推送通知</string>
+			<key>packageVersion</key>
+			<string>1.0.0</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_enabled</string>
+			<key>label</key>
+			<string>启用插件</string>
+			<key>PostNotification</key>
+			<string>com.axs.dipn/changed</string>
+		</dict>
+
+		<!-- 显示设置 -->
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>显示设置</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_show_app_icon</string>
+			<key>label</key>
+			<string>显示 App 图标</string>
+			<key>PostNotification</key>
+			<string>com.axs.dipn/changed</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_show_title</string>
+			<key>label</key>
+			<string>显示通知标题</string>
+			<key>PostNotification</key>
+			<string>com.axs.dipn/changed</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_show_body</string>
+			<key>label</key>
+			<string>显示通知内容</string>
+			<key>PostNotification</key>
+			<string>com.axs.dipn/changed</string>
+		</dict>
+
+		<!-- 时间设置 -->
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>显示时间</string>
+			<key>footerText</key>
+			<string>通知在灵动岛上显示的持续时间（秒）</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>default</key>
+			<real>3.0</real>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_display_duration</string>
+			<key>label</key>
+			<string>显示时长</string>
+			<key>min</key>
+			<real>1.0</real>
+			<key>max</key>
+			<real>10.0</real>
+			<key>showValue</key>
+			<true/>
+			<key>PostNotification</key>
+			<string>com.axs.dipn/changed</string>
+		</dict>
+
+		<!-- 内容设置 -->
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>内容设置</string>
+			<key>footerText</key>
+			<string>通知正文的最大显示字符数</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSliderCell</string>
+			<key>default</key>
+			<integer>50</integer>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_max_body_length</string>
+			<key>label</key>
+			<string>最大字符数</string>
+			<key>min</key>
+			<real>20</real>
+			<key>max</key>
+			<real>100</real>
+			<key>showValue</key>
+			<true/>
+			<key>isSegmented</key>
+			<true/>
+			<key>PostNotification</key>
+			<string>com.axs.dipn/changed</string>
+		</dict>
+
+		<!-- 过滤设置 -->
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>过滤设置</string>
+			<key>footerText</key>
+			<string>开启白名单模式后，只有列表中的 App 通知会显示在灵动岛</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_whitelist_mode</string>
+			<key>label</key>
+			<string>白名单模式</string>
+			<key>PostNotification</key>
+			<string>com.axs.dipn/changed</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>cellClass</key>
+			<string>PSListItemsCell</string>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_blacklist</string>
+			<key>label</key>
+			<string>黑名单</string>
+			<key>detail</key>
+			<string>DIPNBlacklistController</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>cellClass</key>
+			<string>PSListItemsCell</string>
+			<key>defaults</key>
+			<string>com.axs.dipn</string>
+			<key>key</key>
+			<string>dipn_whitelist</string>
+			<key>label</key>
+			<string>白名单</string>
+			<key>detail</key>
+			<string>DIPNWhitelistController</string>
+		</dict>
+
+		<!-- 关于 -->
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>关于</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>GitHub 项目主页</string>
+			<key>action</key>
+			<string>openGithub</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>让任何 App 的推送通知都能在灵动岛上显示
+
+支持 iOS 15-16.6.1 无根越狱
+作者: Axs</string>
+		</dict>
+	</array>
+</dict>
+</plist>
