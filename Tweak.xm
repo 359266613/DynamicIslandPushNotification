@@ -7,8 +7,6 @@
 #import "DIPNPrefsKeys.h"
 
 #pragma mark - 常量定义
-static const CGFloat kCompactIslandWidth = 126.0;
-static const CGFloat kCompactIslandHeight = 37.0;
 static const CGFloat kExpandedIslandWidth = 250.0;
 static const CGFloat kExpandedIslandHeight = 80.0;
 static const CGFloat kAnimationDuration = 0.3;
@@ -244,26 +242,6 @@ static void createIslandNotificationView(void) {
     ]];
 
     DIPNLogInfo(@"灵动岛通知视图已创建");
-}
-
-static void updateIslandNotificationLayout(void) {
-    if (!gIslandNotificationView || !gCurrentIslandView) return;
-
-    CGRect islandFrame = gCurrentIslandView.frame;
-    gIslandNotificationView.frame = islandFrame;
-
-    // 根据内容调整布局
-    BOOL hasBody = gBodyLabel.text.length > 0;
-    CGFloat height = hasBody ? kExpandedIslandHeight : 50;
-
-    [UIView animateWithDuration:kAnimationDuration animations:^{
-        gIslandNotificationView.frame = CGRectMake(
-            islandFrame.origin.x,
-            islandFrame.origin.y,
-            kExpandedIslandWidth,
-            height
-        );
-    }];
 }
 
 static void animateIslandToExpanded(void) {
