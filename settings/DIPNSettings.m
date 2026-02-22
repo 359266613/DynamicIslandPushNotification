@@ -10,6 +10,18 @@ static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.di
 
 @implementation DIPNListController
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.title = @"灵动岛推送通知";
+    }
+    return self;
+}
+
+- (NSString *)plistName {
+    return @"Root";
+}
+
 - (NSArray *)loadSpecifiersFromPlistName:(NSString *)name target:(id)target {
     NSArray *specifiers = [super loadSpecifiersFromPlistName:name target:target];
 
@@ -17,7 +29,7 @@ static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.di
         NSString *key = [specifier propertyForKey:@"key"];
         if (key) {
             id defaultValue = [specifier propertyForKey:@"default"];
-            id currentValue = [super readPreferenceValue:specifier];
+            id currentValue = [self readPreferenceValue:specifier];
             if (defaultValue && !currentValue) {
                 [self setPreferenceValue:defaultValue specifier:specifier];
             }
