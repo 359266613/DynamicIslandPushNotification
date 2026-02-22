@@ -1,9 +1,8 @@
 #import <UIKit/UIKit.h>
 #import <Preferences/Preferences.h>
-#import <Foundation/Foundation.h>
+#import <spawn.h>
 #import "../DIPNPrefsKeys.h"
 
-// 偏好设置路径（rootless 环境）
 static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.dipn.plist";
 
 @interface DIPNListController : PSListController
@@ -11,24 +10,15 @@ static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.di
 
 @implementation DIPNListController
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        // 设置偏好设置文件路径
-        self.specifierPlistPath = @"/Library/PreferenceBundles/DIPNSettings.bundle/Root.plist";
-    }
-    return self;
-}
-
 - (NSArray *)loadSpecifiersFromPlistName:(NSString *)name target:(id)target {
     NSArray *specifiers = [super loadSpecifiersFromPlistName:name target:target];
 
-    // 设置默认值
     for (PSSpecifier *specifier in specifiers) {
         NSString *key = [specifier propertyForKey:@"key"];
         if (key) {
             id defaultValue = [specifier propertyForKey:@"default"];
-            if (defaultValue && ![self readPreferenceValue:key]) {
+            id currentValue = [super readPreferenceValue:specifier];
+            if (defaultValue && !currentValue) {
                 [self setPreferenceValue:defaultValue specifier:specifier];
             }
         }
@@ -37,8 +27,11 @@ static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.di
     return specifiers;
 }
 
-- (id)readPreferenceValue:(NSString *)key {
-    NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:kPrefsPath] ?: [NSMutableDictionary dictionary];
+- (id)readPreferenceValue:(PSSpecifier *)specifier {
+    NSString *key = [specifier propertyForKey:@"key"];
+    if (!key) return nil;
+
+    NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:kPrefsPath];
     return prefs[key];
 }
 
@@ -50,7 +43,6 @@ static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.di
     prefs[key] = value;
     [prefs writeToFile:kPrefsPath atomically:YES];
 
-    // 发送设置变更通知
     CFNotificationCenterPostNotification(
         CFNotificationCenterGetDarwinNotifyCenter(),
         CFSTR(DIPN_PREFS_CHANGED_NOTIFICATION),
@@ -59,14 +51,13 @@ static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.di
 }
 
 - (void)respring {
-    NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath:@"/usr/bin/killall"];
-    [task setArguments:@[@"-9", @"SpringBoard"]];
-    [task launch];
+    pid_t pid;
+    const char *args[] = {"killall", "-9", "SpringBoard", NULL};
+    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char *const *)args, NULL);
 }
 
 - (void)openGithub {
-    NSURL *url = [NSURL URLWithString:@"https://github.com/axs66/Dynamic-Island-Push-Notification"];
+    NSURL *url = [NSURL URLWithString:@"https://github.com/359266613/DynamicIslandPushNotification"];
     [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
 }
 
