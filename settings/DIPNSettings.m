@@ -10,49 +10,29 @@ static NSString *const kPrefsPath = @"/var/mobile/Library/Preferences/com.axs.di
 
 @implementation DIPNListController
 
-- (id)init {
-    self = [super init];
-    if (self) {
-        self.title = @"灵动岛推送通知";
+- (NSArray *)specifiers {
+    if (!_specifiers) {
+        _specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
     }
-    return self;
-}
-
-- (NSString *)plistName {
-    return @"Root";
-}
-
-- (NSArray *)loadSpecifiersFromPlistName:(NSString *)name target:(id)target {
-    NSArray *specifiers = [super loadSpecifiersFromPlistName:name target:target];
-
-    for (PSSpecifier *specifier in specifiers) {
-        NSString *key = [specifier propertyForKey:@"key"];
-        if (key) {
-            id defaultValue = [specifier propertyForKey:@"default"];
-            id currentValue = [self readPreferenceValue:specifier];
-            if (defaultValue && !currentValue) {
-                [self setPreferenceValue:defaultValue specifier:specifier];
-            }
-        }
-    }
-
-    return specifiers;
+    return _specifiers;
 }
 
 - (id)readPreferenceValue:(PSSpecifier *)specifier {
-    NSString *key = [specifier propertyForKey:@"key"];
-    if (!key) return nil;
-
-    NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:kPrefsPath];
-    return prefs[key];
+    NSDictionary *prefs = [NSDictionary dictionaryWithContentsOfFile:kPrefsPath] ?: @{};
+    NSString *key = specifier.properties[@"key"];
+    return prefs[key] ?: specifier.properties[@"default"];
 }
 
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
-    NSString *key = [specifier propertyForKey:@"key"];
+    NSString *key = specifier.properties[@"key"];
     if (!key) return;
 
     NSMutableDictionary *prefs = [NSMutableDictionary dictionaryWithContentsOfFile:kPrefsPath] ?: [NSMutableDictionary dictionary];
-    prefs[key] = value;
+    if (value) {
+        prefs[key] = value;
+    } else {
+        [prefs removeObjectForKey:key];
+    }
     [prefs writeToFile:kPrefsPath atomically:YES];
 
     CFNotificationCenterPostNotification(
